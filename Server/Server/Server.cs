@@ -40,7 +40,7 @@ namespace Server
             InitializeServerData();
 
             tcpListener.Start();
-            tcpListener.BeginAcceptTcpClient(new AsyncCallback(TCPConnnectCallback), null);
+            tcpListener.BeginAcceptTcpClient(TCPConnnectCallback, null);
 
             Console.WriteLine($"Server started on port {Port}");
         }
@@ -48,7 +48,7 @@ namespace Server
         private static void TCPConnnectCallback(IAsyncResult result)
         {
             TcpClient client = tcpListener.EndAcceptTcpClient(result);
-            tcpListener.BeginAcceptTcpClient(new AsyncCallback(TCPConnnectCallback), null);
+            tcpListener.BeginAcceptTcpClient(TCPConnnectCallback, null);
             Console.WriteLine($"Incomming connection from {client.Client.RemoteEndPoint}...");
 
             for (int i = 1; i <= MaxPlayers; i++)
