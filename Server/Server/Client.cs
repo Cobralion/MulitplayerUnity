@@ -54,5 +54,14 @@ namespace Server
                     ServerSend.SpawnPlayer(client.ID, player);
             }
         }
+
+        public void Disconnect()
+        {
+            Console.WriteLine($"{tcp.Socket.Client.RemoteEndPoint} has disconnected!");
+            player = null;
+
+            tcp.Disconnect();
+            udp.Disconnect();
+        }
     }
 }

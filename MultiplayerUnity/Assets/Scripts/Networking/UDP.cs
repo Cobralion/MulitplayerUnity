@@ -51,12 +51,17 @@ public class UDP
         {
             byte[] data = socket.EndReceive(result, ref endPoint);
             socket.BeginReceive(ReceiveCallback, null);
-            if (data.Length < 4) return;
+            if (data.Length < 4)
+            {
+                Client.instance.Disconnect();
+                return;
+            }
 
             HandleData(data);
         }
         catch (Exception ex)
         {
+            Disconnect();
             Debug.Log($"Error occoured: {ex}");
         }
     }
@@ -76,5 +81,13 @@ public class UDP
                 Client.packetHandlers[packetID](packet);
             }
         });
+    }
+
+    private void Disconnect()
+    {
+        Client.instance.Disconnect();
+
+        endPoint = null;
+        socket = null;
     }
 }

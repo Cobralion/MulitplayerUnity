@@ -49,7 +49,7 @@ public class TCP
             int byteLenght = stream.EndRead(result);
             if (byteLenght <= 0)
             {
-                //TODO: Disconnect
+                Client.instance.Disconnect();
                 return;
             }
 
@@ -62,6 +62,7 @@ public class TCP
         }
         catch (Exception ex)
         {
+            Disconnect();
             Console.WriteLine($"Error reseiving TCP data: {ex}");
         }
     }
@@ -124,5 +125,15 @@ public class TCP
         {
             Debug.Log($"Error sending data to Server via TCP: {ex}");
         }
+    }
+
+    private void Disconnect()
+    {
+        Client.instance.Disconnect();
+
+        stream = null;
+        receiveData = null;
+        receiveBuffer = null;
+        Socket = null;
     }
 }

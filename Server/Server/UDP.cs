@@ -40,5 +40,10 @@ namespace Server
                 }
             });
         }
+
+        public void Disconnect()
+        {
+            endPoint = null;
+        }
     }
 }
