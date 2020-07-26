@@ -10,7 +10,7 @@ public class Client : MonoBehaviour
     public int port = 4200;
     public int clientID = 0;
     public TCP tcp;
-
+    public UDP udp;
     public delegate void PacketHandler(Packet packet);
     public static Dictionary<int, PacketHandler> packetHandlers;
 
@@ -25,6 +25,7 @@ public class Client : MonoBehaviour
     public void Start()
     {
         tcp = new TCP();
+        udp = new UDP();
     }
 
     public void ConnectToServer()
@@ -37,7 +38,8 @@ public class Client : MonoBehaviour
     {
         packetHandlers = new Dictionary<int, PacketHandler>()
         {
-            { (int)ServerPackets.welcome, ClientHandle.Welcome }
+            { (int)ServerPackets.welcome, ClientHandle.Welcome },
+            { (int)ServerPackets.spawnPlayer, ClientHandle.SpawnPlayer },
         };
         Debug.Log("Initialized data");
     }

@@ -6,7 +6,7 @@ namespace Server
 {
     public class ServerHandle
     {
-        public static void WelcomeRecived(int fromClient, Packet packet)
+        public static void WelcomeReceived(int fromClient, Packet packet)
         {
             int clientIDCheck = packet.ReadInt();
             string username = packet.ReadString();
@@ -16,6 +16,8 @@ namespace Server
             {
                 Console.WriteLine($"Player \"{username}\" (ID: {fromClient}) has assumed the wrong client ID ({clientIDCheck})!");
             }
+
+            Server.Clients[fromClient].SendIntoGame(username);
         }
     }
 }

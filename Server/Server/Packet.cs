@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Numerics;
 using System.Text;
 
 namespace Server
@@ -7,13 +8,17 @@ namespace Server
     /// <summary>Sent from server to client.</summary>
     public enum ServerPackets
     {
-        welcome = 1
+        welcome = 1,
+        spawnPlayer,
+        playerPosition,
+        playerMovement,
+        playerRotation
     }
 
     /// <summary>Sent from client to server.</summary>
     public enum ClientPackets
     {
-        welcomeReceived = 1
+        welcomeReceived = 1,
     }
 
     public class Packet : IDisposable
@@ -157,6 +162,23 @@ namespace Server
             Write(_value.Length); // Add the length of the string to the packet
             // TODO: Add UTF-8 support
             buffer.AddRange(Encoding.ASCII.GetBytes(_value)); // Add the string itself
+        }
+        /// <summary>Adds a Vector3 to the packet.</summary>
+        /// <param name="_value">The Vector3 to add.</param>
+        public void Write(Vector3 _value)
+        {
+            Write(_value.X);
+            Write(_value.Y);
+            Write(_value.Z);
+        }
+        /// <summary>Adds a Quaternion to the packet.</summary>
+        /// <param name="_value">The Quaternion to add.</param>
+        public void Write(Quaternion _value)
+        {
+            Write(_value.X);
+            Write(_value.Y);
+            Write(_value.Z);
+            Write(_value.W);
         }
         #endregion
 
@@ -328,6 +350,14 @@ namespace Server
             {
                 throw new Exception("Could not read value of type 'string'!");
             }
+        }
+        public Vector3 ReadVector3(bool moveReadPos = true)
+        {
+            return new Vector3(ReadFloat(moveReadPos), ReadFloat(moveReadPos), ReadFloat(moveReadPos));
+        }
+        public Quaternion ReadQuaternion(bool moveReadPos = true)
+        {
+            return new Quaternion(ReadFloat(moveReadPos), ReadFloat(moveReadPos), ReadFloat(moveReadPos), ReadFloat(moveReadPos));
         }
         #endregion
 

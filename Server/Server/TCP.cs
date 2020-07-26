@@ -60,15 +60,15 @@ namespace Server
         {
             try
             {
-                int byteLenght = stream.EndRead(result);
-                if(byteLenght <= 0)
+                int byteLength = stream.EndRead(result);
+                if(byteLength <= 0)
                 {
                     //TODO: Disconnect
                     return;
                 }
 
-                byte[] data = new byte[byteLenght];
-                Array.Copy(receiveBuffer, data, byteLenght);
+                byte[] data = new byte[byteLength];
+                Array.Copy(receiveBuffer, data, byteLength);
 
                 receiveData.Reset(HandleData(data));
                 stream.BeginRead(receiveBuffer, 0, dataBufferSize, ReceiveCallback, null);
@@ -81,22 +81,22 @@ namespace Server
 
         private bool HandleData(byte[] data)
         {
-            int packetLenght = 0;
+            int packetLength = 0;
 
             receiveData.SetBytes(data);
 
             if (receiveData.UnreadLength() >= 4)
             {
-                packetLenght = receiveData.ReadInt();
-                if (packetLenght <= 0)
+                packetLength = receiveData.ReadInt();
+                if (packetLength <= 0)
                 {
                     return true;
                 }
             }
 
-            while (packetLenght > 0 && packetLenght <= receiveData.UnreadLength())
+            while (packetLength > 0 && packetLength <= receiveData.UnreadLength())
             {
-                byte[] packetBytes = receiveData.ReadBytes(packetLenght);
+                byte[] packetBytes = receiveData.ReadBytes(packetLength);
 
                 ThreadManager.ExecuteOnMainThread(() =>
                 {
@@ -107,19 +107,19 @@ namespace Server
                     }
                 });
 
-                packetLenght = 0;
+                packetLength = 0;
 
                 if (receiveData.UnreadLength() >= 4)
                 {
-                    packetLenght = receiveData.ReadInt();
-                    if (packetLenght <= 0)
+                    packetLength = receiveData.ReadInt();
+                    if (packetLength <= 0)
                     {
                         return true;
                     }
                 }
             }
 
-            if (packetLenght <= 1)
+            if (packetLength <= 1)
                 return true;
             return false;
         }
