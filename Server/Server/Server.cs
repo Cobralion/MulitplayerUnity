@@ -27,6 +27,9 @@ namespace Server
             get => clients ?? (clients = new Dictionary<int, Client>());
         }
 
+        public delegate void PacketHandler(int fromClient, Packet packet);
+        public static Dictionary<int, PacketHandler> packetHandlers;
+
         private static TcpListener tcpListener;
 
         public static void Start(int maxPlayers, int port)
@@ -69,6 +72,13 @@ namespace Server
             {
                 Clients.Add(i, new Client(i));
             }
+
+            packetHandlers = new Dictionary<int, PacketHandler>()
+            {
+                { (int)ClientPackets.welcomeReceived, ServerHandle.WelcomeRecived }
+            };
+
+            Console.WriteLine("Inited server data");
         }
     }
 }

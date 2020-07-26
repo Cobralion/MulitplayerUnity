@@ -17,6 +17,7 @@ namespace Server
 
         private NetworkStream stream;
         private byte[] receiveBuffer;
+        private Packet receiveData;
 
         private readonly int id;
 
@@ -32,6 +33,7 @@ namespace Server
             Socket.ReceiveBufferSize = dataBufferSize;
 
             stream = Socket.GetStream();
+            receiveData = new Packet();
             receiveBuffer = new byte[dataBufferSize];
 
             stream.BeginRead(receiveBuffer, 0, dataBufferSize, ReceiveCallback, null);
@@ -67,12 +69,59 @@ namespace Server
 
                 byte[] data = new byte[byteLenght];
                 Array.Copy(receiveBuffer, data, byteLenght);
+
+                receiveData.Reset(HandleData(data));
                 stream.BeginRead(receiveBuffer, 0, dataBufferSize, ReceiveCallback, null);
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"Error reseiving TCP data: {ex}");
             }
+        }
+
+        private bool HandleData(byte[] data)
+        {
+            int packetLenght = 0;
+
+            receiveData.SetBytes(data);
+
+            if (receiveData.UnreadLength() >= 4)
+            {
+                packetLenght = receiveData.ReadInt();
+                if (packetLenght <= 0)
+                {
+                    return true;
+                }
+            }
+
+            while (packetLenght > 0 && packetLenght <= receiveData.UnreadLength())
+            {
+                byte[] packetBytes = receiveData.ReadBytes(packetLenght);
+
+                ThreadManager.ExecuteOnMainThread(() =>
+                {
+                    using (Packet packet = new Packet(packetBytes))
+                    {
+                        int packetID = packet.ReadInt();
+                        Server.packetHandlers[packetID](id, packet);
+                    }
+                });
+
+                packetLenght = 0;
+
+                if (receiveData.UnreadLength() >= 4)
+                {
+                    packetLenght = receiveData.ReadInt();
+                    if (packetLenght <= 0)
+                    {
+                        return true;
+                    }
+                }
+            }
+
+            if (packetLenght <= 1)
+                return true;
+            return false;
         }
     }
 }

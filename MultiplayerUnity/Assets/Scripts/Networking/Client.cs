@@ -12,7 +12,7 @@ public class Client : MonoBehaviour
     public TCP tcp;
 
     public delegate void PacketHandler(Packet packet);
-    public static Dictionary<int, PacketHandler> packetHandler;
+    public static Dictionary<int, PacketHandler> packetHandlers;
 
     public void Awake()
     {
@@ -35,7 +35,7 @@ public class Client : MonoBehaviour
 
     private void InitClientData()
     {
-        packetHandler = new Dictionary<int, PacketHandler>()
+        packetHandlers = new Dictionary<int, PacketHandler>()
         {
             { (int)ServerPackets.welcome, ClientHandle.Welcome }
         };

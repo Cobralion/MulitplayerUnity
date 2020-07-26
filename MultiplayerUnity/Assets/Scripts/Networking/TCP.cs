@@ -90,7 +90,7 @@ public class TCP
                 using(Packet packet = new Packet(packetBytes))
                 {
                     int packetID = packet.ReadInt();
-                    Client.packetHandler[packetID](packet);
+                    Client.packetHandlers[packetID](packet);
                 }
             });
 
@@ -122,7 +122,7 @@ public class TCP
         }
         catch (Exception ex)
         {
-            Debug.Log($"Error sending data to Server via TCP: {ex}")
+            Debug.Log($"Error sending data to Server via TCP: {ex}");
         }
     }
 }
