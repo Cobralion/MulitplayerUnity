@@ -35,6 +35,23 @@ namespace Server
             receiveBuffer = new byte[dataBufferSize];
 
             stream.BeginRead(receiveBuffer, 0, dataBufferSize, ReceiveCallback, null);
+
+            ServerSend.Welcome(id, "Welcome to the Server");
+        }
+
+        public void SendData(Packet packet)
+        {
+            try
+            {
+                if(Socket != null)
+                {
+                    stream.BeginWrite(packet.ToArray(), 0, packet.Length(), null, null);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Unable to send packet to {id} via TCP: {ex}");
+            }
         }
 
         private void ReceiveCallback(IAsyncResult result)
