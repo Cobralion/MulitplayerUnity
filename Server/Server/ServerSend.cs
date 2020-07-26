@@ -30,6 +30,28 @@ namespace Server
                 SendTCPData(toClient, packet);
             }
         }
+
+        public static void PlayerPosition(Player player)
+        {
+            using (Packet packet = new Packet((int)ServerPackets.playerPosition))
+            {
+                packet.Write(player.id);
+                packet.Write(player.position);
+
+                SendUDPDataToAll(packet);
+            }
+        }
+        public static void PlayerRotation(Player player)
+        {
+            using (Packet packet = new Packet((int)ServerPackets.playerRotation))
+            {
+                packet.Write(player.id);
+                packet.Write(player.rotation);
+
+                SendUDPDataToAll(packet, player.id);
+            }
+        }
+
         #endregion
 
         private static void SendTCPData(int toClient, Packet packet)

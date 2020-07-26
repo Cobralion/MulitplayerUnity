@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Numerics;
 using System.Text;
 
 namespace Server
@@ -18,6 +19,19 @@ namespace Server
             }
 
             Server.Clients[fromClient].SendIntoGame(username);
+        }
+
+        public static void PlayerMovement(int fromClient, Packet packet)
+        {
+            bool[] inputs = new bool[packet.ReadInt()];
+            for (int i = 0; i < inputs.Length; i++)
+            {
+                inputs[i] = packet.ReadBool();
+            }
+
+            Quaternion rotation = packet.ReadQuaternion();
+
+            Server.Clients[fromClient].player.SetInput(inputs, rotation);
         }
     }
 }

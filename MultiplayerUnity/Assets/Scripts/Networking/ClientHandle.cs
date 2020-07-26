@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Net;
 using UnityEngine;
@@ -25,5 +26,21 @@ public class ClientHandle : MonoBehaviour
         Quaternion rotaion = packet.ReadQuaternion();
 
         GameManager.instance.SpawnPlayer(id, username, position, rotaion);
+    }
+
+    public static void PlayerPosition(Packet packet)
+    {
+        int id = packet.ReadInt();
+        Vector3 position = packet.ReadVector3();
+
+        GameManager.players[id].transform.position = position;
+    }
+
+    public static void PlayerRotation(Packet packet)
+    {
+        int id = packet.ReadInt();
+        Quaternion rotaion = packet.ReadQuaternion();
+
+        GameManager.players[id].transform.rotation = rotaion;
     }
 }
