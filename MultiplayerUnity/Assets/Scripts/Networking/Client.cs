@@ -11,6 +11,9 @@ public class Client : MonoBehaviour
     public int clientID = 0;
     public TCP tcp;
 
+    public delegate void PacketHandler(Packet packet);
+    public static Dictionary<int, PacketHandler> packetHandler;
+
     public void Awake()
     {
         if (instance == null)
@@ -26,6 +29,16 @@ public class Client : MonoBehaviour
 
     public void ConnectToServer()
     {
+        InitClientData();
         tcp.Connect();
+    }
+
+    private void InitClientData()
+    {
+        packetHandler = new Dictionary<int, PacketHandler>()
+        {
+            { (int)ServerPackets.welcome, ClientHandle.Welcome }
+        };
+        Debug.Log("Initialized data");
     }
 }

@@ -10,7 +10,7 @@ namespace Server
         {
             Console.Title = "Game Server";
 
-            Server.Start(2, 4200);
+            Server.Start(100, 4200);
 
             Console.ReadKey();
             Task.Delay(100);

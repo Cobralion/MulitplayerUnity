@@ -16,6 +16,7 @@ public class TCP
 
     private NetworkStream stream;
     private byte[] receiveBuffer;
+    private Packet receiveData;
 
     public void Connect()
     {
@@ -35,7 +36,10 @@ public class TCP
 
         if (!Socket.Connected) return;
         stream = Socket.GetStream();
-        Socket.BeginConnect(Client.instance.ip, Client.instance.port, ConnectCallback, null);
+
+        receiveData = new Packet();
+
+        stream.BeginRead(receiveBuffer, 0, dataBufferSize, ReceiveCallback, null);
     }
 
     private void ReceiveCallback(IAsyncResult result)
@@ -51,11 +55,74 @@ public class TCP
 
             byte[] data = new byte[byteLenght];
             Array.Copy(receiveBuffer, data, byteLenght);
+
+            receiveData.Reset(HandleData(data));
+
             stream.BeginRead(receiveBuffer, 0, dataBufferSize, ReceiveCallback, null);
         }
         catch (Exception ex)
         {
             Console.WriteLine($"Error reseiving TCP data: {ex}");
+        }
+    }
+
+    private bool HandleData(byte[] data)
+    {
+        int packetLenght = 0;
+
+        receiveData.SetBytes(data);
+
+        if (receiveData.UnreadLength() >= 4)
+        {
+            packetLenght = receiveData.ReadInt();
+            if(packetLenght <= 0)
+            {
+                return true;
+            }
+        }
+
+        while(packetLenght > 0 && packetLenght <= receiveData.UnreadLength())
+        {
+            byte[] packetBytes = receiveData.ReadBytes(packetLenght);
+
+            ThreadManager.ExecuteOnMainThread(() =>
+            {
+                using(Packet packet = new Packet(packetBytes))
+                {
+                    int packetID = packet.ReadInt();
+                    Client.packetHandler[packetID](packet);
+                }
+            });
+
+            packetLenght = 0;
+
+            if (receiveData.UnreadLength() >= 4)
+            {
+                packetLenght = receiveData.ReadInt();
+                if (packetLenght <= 0)
+                {
+                    return true;
+                }
+            }
+        }
+
+        if (packetLenght <= 1)
+            return true;
+        return false;
+    }
+
+    public void SendData(Packet packet)
+    {
+        try
+        {
+            if(Socket != null)
+            {
+                stream.BeginWrite(packet.ToArray(), 0, packet.Length(), null, null);
+            }
+        }
+        catch (Exception ex)
+        {
+            Debug.Log($"Error sending data to Server via TCP: {ex}")
         }
     }
 }

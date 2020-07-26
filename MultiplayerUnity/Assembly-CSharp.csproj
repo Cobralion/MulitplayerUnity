@@ -64,7 +64,11 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Scripts\Networking\Client.cs" />
+    <Compile Include="Assets\Scripts\Networking\ClientHandle.cs" />
+    <Compile Include="Assets\Scripts\Networking\ClientSend.cs" />
+    <Compile Include="Assets\Scripts\Networking\Packet.cs" />
     <Compile Include="Assets\Scripts\Networking\TCP.cs" />
+    <Compile Include="Assets\Scripts\Networking\ThreadManager.cs" />
     <Compile Include="Assets\Scripts\UIManager.cs" />
     <Reference Include="UnityEngine">
       <HintPath>C:/Program Files/Unity/Hub/Editor/2019.4.5f1/Editor/Data/Managed/UnityEngine/UnityEngine.dll</HintPath>
