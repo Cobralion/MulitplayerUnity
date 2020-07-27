@@ -43,4 +43,24 @@ public class ClientHandle : MonoBehaviour
 
         GameManager.players[id].transform.rotation = rotaion;
     }
+
+    public static void CreateCube(Packet packet)
+    {
+        var id = packet.ReadInt();
+        var pos = packet.ReadVector3();
+        var rot = packet.ReadQuaternion();
+
+        Debug.Log($"Creating cube at {pos} for client {id}");
+
+        GameManager.instance.SpawnCube(id, pos, rot);
+    }
+
+    public static void DestroyCube(Packet packet)
+    {
+        var id = packet.ReadInt();
+
+        Debug.Log($"Destroing cube for client {id}");
+
+        GameManager.instance.DestroyCube(id);
+    }
 }

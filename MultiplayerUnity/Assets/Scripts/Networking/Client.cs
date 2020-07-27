@@ -52,6 +52,8 @@ public class Client : MonoBehaviour
             { (int)ServerPackets.spawnPlayer, ClientHandle.SpawnPlayer },
             { (int)ServerPackets.playerPosition, ClientHandle.PlayerPosition },
             { (int)ServerPackets.playerRotation, ClientHandle.PlayerRotation },
+            { (int)ServerPackets.createCube, ClientHandle.CreateCube },
+            { (int)ServerPackets.destroyCube, ClientHandle.DestroyCube },
         };
         Debug.Log("Initialized data");
     }
@@ -61,8 +63,8 @@ public class Client : MonoBehaviour
         if(isConnected)
         {
             isConnected = false;
-            tcp.Socket.Close();
-            udp.socket.Close();
+            tcp?.Socket.Close();
+            udp?.socket.Close();
 
             Debug.Log("Disconnected from server");
         }

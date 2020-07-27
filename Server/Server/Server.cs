@@ -129,6 +129,7 @@ namespace Server
             {
                 { (int)ClientPackets.welcomeReceived, ServerHandle.WelcomeReceived },
                 { (int)ClientPackets.playerMovement, ServerHandle.PlayerMovement },
+                { (int)ClientPackets.requestCube, ServerHandle.RequestCube },
             };
 
             Console.WriteLine("Inited server data");

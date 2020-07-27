@@ -19,6 +19,12 @@ namespace Server
             private set;
         }
 
+        public Cube Cube
+        {
+            get;
+            private set;
+        }
+
         public TCP tcp
         {
             get;
@@ -44,21 +50,48 @@ namespace Server
 
             foreach (Client client in Server.Clients.Values)
             {
-                if(client.player != null && client.ID != ID)
+                if (client.player != null && client.ID != ID)
+                {
                     ServerSend.SpawnPlayer(ID, client.player);
+                    if(client.Cube != null)
+                        ServerSend.CreateCube(ID, client.Cube);
+                }
             }
 
             foreach (Client client in Server.Clients.Values)
             {
                 if (client.player != null)
+                {
                     ServerSend.SpawnPlayer(client.ID, player);
+                }
             }
+        }
+
+        public void CreateCube(Vector3 position)
+        {
+            if (Cube != null)
+            {
+                Console.WriteLine($"Cube {Cube.id} should be destroyed");
+                ServerSend.DestroyCube(0, Cube);
+            }
+
+            Cube = new Cube(ID, position);
+
+            //foreach (Client client in Server.Clients.Values)
+            //{
+            //    if (client.player != null && client.ID != ID)
+            //        ServerSend.CreateCube(client.Cube);
+            //}
+
+            Console.WriteLine($"Created Cube {Cube.id}");
+            ServerSend.CreateCube(Cube);
         }
 
         public void Disconnect()
         {
             Console.WriteLine($"{tcp.Socket.Client.RemoteEndPoint} has disconnected!");
             player = null;
+            Cube = null;
 
             tcp.Disconnect();
             udp.Disconnect();

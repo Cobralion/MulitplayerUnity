@@ -154,6 +154,8 @@ MonoBehaviour:
     type: 3}
   playerPrefab: {fileID: 8183087074851562922, guid: 333a339f7fc6af843a2f349c672a69ba,
     type: 3}
+  cubePrefab: {fileID: 391859541080081804, guid: 5c3d9939c9d021e4094fedd430184a30,
+    type: 3}
 --- !u!4 &223974228
 Transform:
   m_ObjectHideFlags: 0

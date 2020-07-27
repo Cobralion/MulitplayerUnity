@@ -18,6 +18,18 @@ public class ClientSend : MonoBehaviour
     }
 
     #region Packets
+    public static void RequestCube(Vector3 vector3)
+    {
+        using (Packet packet = new Packet((int)ClientPackets.requestCube))
+        {
+            packet.Write(Client.instance.clientID);
+            packet.Write(vector3);
+
+            Debug.Log($"Sending request for cube for {Client.instance.clientID}");
+
+            SendTCPData(packet);
+        }
+    }
 
     public static void WelcomeReceived()
     {

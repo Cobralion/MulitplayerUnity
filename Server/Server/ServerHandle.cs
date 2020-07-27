@@ -33,5 +33,15 @@ namespace Server
 
             Server.Clients[fromClient].player.SetInput(inputs, rotation);
         }
+
+        public static void RequestCube(int fromClient, Packet packet)
+        {
+            int id = packet.ReadInt();
+            Vector3 position = packet.ReadVector3();
+
+            Console.WriteLine($"Received cube request form {fromClient}");
+
+            Server.Clients[fromClient].CreateCube(position);
+        }
     }
 }

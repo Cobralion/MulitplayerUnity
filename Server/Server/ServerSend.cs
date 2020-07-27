@@ -52,6 +52,39 @@ namespace Server
             }
         }
 
+        public static void CreateCube(Cube cube)
+        {
+            using (Packet packet = new Packet((int)ServerPackets.createCube))
+            {
+                packet.Write(cube.id);
+                packet.Write(cube.position);
+                packet.Write(cube.rotation);
+
+                SendTCPDataToAll(packet);
+            }
+        }
+
+        public static void CreateCube(int toClient, Cube cube)
+        {
+            using (Packet packet = new Packet((int)ServerPackets.createCube))
+            {
+                packet.Write(cube.id);
+                packet.Write(cube.position);
+                packet.Write(cube.rotation);
+
+                SendTCPData(toClient, packet);
+            }
+        }
+
+        public static void DestroyCube(int toClient, Cube cube)
+        {
+           using(Packet packet = new Packet((int)ServerPackets.destroyCube))
+            {
+                packet.Write(cube.id);
+
+                SendTCPDataToAll(packet);
+            }
+        }
         #endregion
 
         private static void SendTCPData(int toClient, Packet packet)
@@ -61,15 +94,17 @@ namespace Server
             Server.Clients[toClient].tcp.SendData(packet);
         }
 
+
         private static void SendTCPDataToAll(Packet packet)
         {
             packet.WriteLength();
 
             for (int i = 1; i < Server.MaxPlayers; i++)
             {
-                Server.Clients[i].tcp.SendData(packet);
+                Server.Clients[i].tcp?.SendData(packet);
             }
         }
+
 
         private static void SendTCPDataToAll(Packet packet, int except)
         {
